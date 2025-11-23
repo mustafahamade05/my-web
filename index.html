@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathe Life - Interactive Lung Cancer Awareness</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-links a.active {
+            color: #0ea5e9;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3);
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(14, 165, 233, 0.4);
+        }
+
+        /* Content Pages */
+        .content-page {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: #0ea5e9;
+            border-bottom-color: #0ea5e9;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Accordion */
+        .accordion {
+            margin: 2rem 0;
+        }
+
+        .accordion-item {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .accordion-item:hover {
+            border-color: #0ea5e9;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.1);
+        }
+
+        .accordion-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #0c4a6e;
+            font-size: 1.2rem;
+            user-select: none;
+        }
+
+        .accordion-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 1.5rem;
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .accordion-item.active .accordion-content {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        /* Interactive Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .interactive-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .interactive-card:hover::before {
+            left: 100%;
+        }
+
+        .interactive-card:hover {
+            border-color: #0ea5e9;
+            transform: translateY(-8px);
+            box-shadow: 0 15px 45px rgba(14, 165, 233, 0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0c4a6e;
+            margin-bottom: 1rem;
+        }
+
+        /* Risk Calculator */
+        .calculator {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .calculator h3 {
+            font-size: 2rem;
+            color: #0c4a6e;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .question {
+            margin-bottom: 2rem;
+        }
+
+        .question label {
+            display: block;
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .question select, .question input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .question select:focus, .question input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .risk-result {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+            text-align: center;
+            display: none;
+        }
+
+        .risk-result.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .risk-level {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 1rem 0;
+        }
+
+        .risk-low { color: #10b981; }
+        .risk-medium { color: #f59e0b; }
+        .risk-high { color: #ef4444; }
+
+        /* Testimonials Slider */
+        .testimonials {
+            background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%);
+            padding: 4rem 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .testimonial {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .testimonial.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .testimonial-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .slider-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .slider-btn:hover {
+            background: white;
+            color: #0ea5e9;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: #f8fafc;
+            padding: 4rem 2rem;
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #06b6d4);
+            transition: width 0.5s ease;
+        }
+
+        /* Stats Counter */
+        .stats-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 20px;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Interactive Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+            margin: 3rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: #0ea5e9;
+            border-radius: 50%;
+            border: 4px solid #e0f2fe;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 16px;
+            width: 2px;
+            height: 100%;
+            background: #e2e8f0;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover .timeline-content {
+            border-color: #0ea5e9;
+            box-shadow: 0 8px 30px rgba(14, 165, 233, 0.15);
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #64748b;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #0ea5e9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="showPage('home')">🫁 Breathe Life</div>
+            <ul class="nav-links">
+                <li><a onclick="showPage('home')" class="nav-link active" data-page="home">Home</a></li>
+                <li><a onclick="showPage('about')" class="nav-link" data-page="about">About</a></li>
+                <li><a onclick="showPage('prevention')" class="nav-link" data-page="prevention">Prevention</a></li>
+                <li><a onclick="showPage('treatment')" class="nav-link" data-page="treatment">Treatment</a></li>
+                <li><a onclick="showPage('resources')" class="nav-link" data-page="resources">Resources</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home" class="page active">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Every Breath Matters</h1>
+                    <p style="font-size: 1.3rem; color: #475569; margin-bottom: 2rem;">Empowering lives through education, early detection, and comprehensive support in the fight against lung cancer.</p>
+                    <button class="btn-primary" onclick="showPage('about')">Explore Resources →</button>
+                </div>
+                <div>
+                    <div style="background: white; border-radius: 24px; padding: 2rem; box-shadow: 0 20px 60px rgba(0,0,0,0.1);">
+                        <h3 style="color: #0c4a6e; margin-bottom: 1.5rem; font-size: 1.5rem; text-align: center;">Global Impact 2025</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px;">
+                                <div style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2.5M</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">Annual Cases</div>
+                            </div>
+                            <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px;">
+                                <div style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">63%</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">5-Year Survival</div>
+                            </div>
+                            <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px;">
+                                <div style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">20%</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">Smoking Decline</div>
+                            </div>
+                            <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px;">
+                                <div style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">75+</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">Countries</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Animated Stats -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" data-target="2500000">0</div>
+                    <p style="color: #64748b; font-weight: 600;">New Cases Annually</p>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" data-target="63">0</div>
+                    <p style="color: #64748b; font-weight: 600;">% Early Detection Survival</p>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" data-target="20">0</div>
+                    <p style="color: #64748b; font-weight: 600;">% Decline in Smoking</p>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" data-target="1800000">0</div>
+                    <p style="color: #64748b; font-weight: 600;">Deaths Prevented by Screening</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Slider -->
+        <section class="testimonials">
+            <div class="testimonial-container">
+                <div class="testimonial active">
+                    <div class="testimonial-text">"Early detection saved my life. I'm now 5 years cancer-free and living every day to the fullest. Don't wait - get screened."</div>
+                    <div class="testimonial-author">— Sarah M., Survivor</div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-text">"The support I received made all the difference. I never felt alone during my treatment journey."</div>
+                    <div class="testimonial-author">— James T., Survivor</div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-text">"Knowledge is power. Understanding my diagnosis helped me make informed decisions about my care."</div>
+                    <div class="testimonial-author">— Maria L., Survivor</div>
+                </div>
+                <div class="slider-controls">
+                    <button class="slider-btn" onclick="changeTestimonial(-1)">←</button>
+                    <button class="slider-btn" onclick="changeTestimonial(1)">→</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="about" class="page">
+        <div class="content-page">
+            <div class="page-header">
+                <h1>Understanding Lung Cancer</h1>
+                <p style="font-size: 1.2rem; color: #64748b;">Comprehensive information about types, causes, symptoms, and diagnosis</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="🔍 Search for symptoms, types, or information..." id="aboutSearch">
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('basics')">Basics</button>
+                <button class="tab" onclick="switchTab('types')">Types</button>
+                <button class="tab" onclick="switchTab('symptoms')">Symptoms</button>
+                <button class="tab" onclick="switchTab('diagnosis')">Diagnosis</button>
+                <button class="tab" onclick="switchTab('stages')">Stages</button>
+            </div>
+
+            <!-- Tab Content: Basics -->
+            <div id="basics" class="tab-content active">
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>🫁 What is Lung Cancer?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Lung cancer occurs when cells in the lungs begin to grow abnormally and uncontrollably. These cancerous cells can form tumors that interfere with the lung's ability to provide oxygen to the bloodstream. It's the leading cause of cancer-related deaths worldwide, but when detected early, it's highly treatable.</p>
+                            <p style="margin-top: 1rem;"><strong>Key Facts:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Most common cancer worldwide</li>
+                                <li>Responsible for 1.8 million deaths annually</li>
+                                <li>Early detection increases 5-year survival to 63%</li>
+                                <li>Many cases are preventable</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>🔬 How Does It Develop?</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Lung cancer typically develops over many years. Repeated exposure to carcinogens (cancer-causing substances) damages the cells lining the lungs. Over time, these damaged cells can become cancerous.</p>
+                            <p style="margin-top: 1rem;"><strong>Development Timeline:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li><strong>Years 0-10:</strong> Initial cell damage from carcinogens</li>
+                                <li><strong>Years 10-20:</strong> Precancerous changes develop</li>
+                                <li><strong>Years 20-30:</strong> Cancer may form and grow</li>
+                                <li><strong>If untreated:</strong> Cancer can spread to other organs</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>⚠️ Major Risk Factors</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>1. Smoking:</strong> Responsible for 85% of lung cancer cases. Risk increases with number of cigarettes and years smoked.</p>
+                            <p><strong>2. Secondhand Smoke:</strong> Increases risk by 20-30% in non-smokers.</p>
+                            <p><strong>3. Radon Gas:</strong> Second leading cause. Naturally occurring radioactive gas that can accumulate in homes.</p>
+                            <p><strong>4. Occupational Exposure:</strong> Asbestos, arsenic, chromium, nickel.</p>
+                            <p><strong>5. Air Pollution:</strong> Long-term exposure to particulate matter.</p>
+                            <p><strong>6. Family History:</strong> Genetic predisposition increases risk.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>📊 Statistics & Prevalence</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Global Impact:</strong></p>
+                            <ul style="margin-left: 1.5rem;">
+                                <li>2.5 million new cases diagnosed annually (2022 data)</li>
+                                <li>1.8 million deaths per year worldwide</li>
+                                <li>Most common cancer in men, second in women</li>
+                                <li>Average age at diagnosis: 70 years</li>
+                                <li>Rates declining in countries with tobacco control</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Types -->
+            <div id="types" class="tab-content">
+                <div class="card-grid">
+                    <div class="interactive-card" onclick="openModal('nsclc')">
+                        <div class="card-icon">🔬</div>
+                        <div class="card-title">Non-Small Cell (NSCLC)</div>
+                        <p style="color: #64748b;">85% of all lung cancers. Grows slower and has better prognosis.</p>
+                        <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Click to learn more →</p>
+                    </div>
+
+                    <div class="interactive-card" onclick="openModal('sclc')">
+                        <div class="card-icon">⚡</div>
+                        <div class="card-title">Small Cell (SCLC)</div>
+                        <p style="color: #64748b;">15% of cases. Grows rapidly but responds well to chemotherapy.</p>
+                        <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Click to learn more →</p>
+                    </div>
+
+                    <div class="interactive-card" onclick="openModal('rare')">
+                        <div class="card-icon">🧬</div>
+                        <div class="card-title">Rare Types</div>
+                        <p style="color: #64748b;">Carcinoid tumors, sarcomas, and other rare forms.</p>
+                        <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Click to learn more →</p>
+                    </div>
+                </div>
+
+                <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 2rem; border-radius: 20px; margin-top: 2rem;">
+                    <h3 style="color: #0c4a6e; margin-bottom: 1rem; font-size: 1.5rem;">NSCLC Subtypes:</h3>
+                    <ul style="color: #64748b; line-height: 2; margin-left: 1.5rem;">
+                        <li><strong>Adenocarcinoma (40%):</strong> Most common, usually in outer lung regions</li>
+                        <li><strong>Squamous Cell (25-30%):</strong> Forms in central airways, linked to smoking</li>
+                        <li><strong>Large Cell (10-15%):</strong> Can appear anywhere in the lung</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab Content: Symptoms -->
+            <div id="symptoms" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">Recognizing the Warning Signs</h3>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Early Symptoms (Often Subtle)</h4>
+                            <ul style="color: #64748b; margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Persistent cough lasting more than 2-3 weeks</li>
+                                <li>Changes in existing chronic cough</li>
+                                <li>Shortness of breath during normal activities</li>
+                                <li>Chest discomfort or mild pain</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Progressive Symptoms</h4>
+                            <ul style="color: #64748b; margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Coughing up blood (hemoptysis)</li>
+                                <li>Hoarseness or voice changes</li>
+                                <li>Recurring lung infections (pneumonia, bronchitis)</li>
+                                <li>Wheezing or noisy breathing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Advanced Symptoms</h4>
+                            <ul style="color: #64748b; margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Unexplained weight loss (10+ pounds)</li>
+                                <li>Severe fatigue and weakness</li>
+                                <li>Bone pain (if spread to bones)</li>
+                                <li>Headaches (if spread to brain)</li>
+                                <li>Swelling in face or neck</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+                    <h4 style="color: #991b1b; margin-bottom: 1rem;">⚠️ When to See a Doctor Immediately</h4>
+                    <p style="color: #64748b;">Contact your healthcare provider if you experience:</p>
+                    <ul style="color: #64748b; margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>Coughing up blood</li>
+                        <li>Severe chest pain</li>
+                        <li>Extreme shortness of breath</li>
+                        <li>Sudden weight loss with no explanation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab Content: Diagnosis -->
+            <div id="diagnosis" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">Diagnostic Process</h3>
+                
+                <div class="card-grid">
+                    <div class="interactive-card">
+                        <div class="card-icon">📋</div>
+                        <div class="card-title">1. Initial Assessment</div>
+                        <p style="color: #64748b;">Medical history review, physical exam, symptom evaluation</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🔍</div>
+                        <div class="card-title">2. Imaging Tests</div>
+                        <p style="color: #64748b;">Chest X-ray, CT scan, PET scan, MRI</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🧪</div>
+                        <div class="card-title">3. Lab Tests</div>
+                        <p style="color: #64748b;">Sputum cytology, blood tests, tumor markers</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">💉</div>
+                        <div class="card-title">4. Biopsy</div>
+                        <p style="color: #64748b;">Tissue sample analysis to confirm cancer</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🧬</div>
+                        <div class="card-title">5. Molecular Testing</div>
+                        <p style="color: #64748b;">Genetic mutations, biomarkers for targeted therapy</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-title">6. Staging</div>
+                        <p style="color: #64748b;">Determine extent of cancer spread (Stage I-IV)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Stages -->
+            <div id="stages" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">Cancer Stages Explained</h3>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Stage I: Early, Localized Cancer</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Description:</strong> Cancer is small and contained within the lung. Has not spread to lymph nodes.</p>
+                            <p><strong>5-Year Survival Rate:</strong> 60-70% with treatment</p>
+                            <p><strong>Treatment:</strong> Surgery is often curative. May follow with chemotherapy.</p>
+                            <p><strong>Size:</strong> Tumor ≤3cm (Stage IA) or 3-4cm (Stage IB)</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Stage II: Larger or Spreading to Nearby Nodes</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Description:</strong> Tumor is larger or has spread to nearby lymph nodes.</p>
+                            <p><strong>5-Year Survival Rate:</strong> 40-50%</p>
+                            <p><strong>Treatment:</strong> Surgery + chemotherapy. Sometimes radiation.</p>
+                            <p><strong>Size:</strong> Tumor 4-5cm or spread to nearby lymph nodes</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Stage III: Advanced Local Spread</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Description:</strong> Cancer has spread extensively to lymph nodes or nearby structures.</p>
+                            <p><strong>5-Year Survival Rate:</strong> 15-30%</p>
+                            <p><strong>Treatment:</strong> Combination of chemotherapy, radiation, possibly surgery or immunotherapy.</p>
+                            <p><strong>Note:</strong> Often not operable, but treatment can extend life significantly.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Stage IV: Metastatic (Spread to Distant Sites)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Description:</strong> Cancer has spread to other organs (brain, bones, liver, other lung).</p>
+                            <p><strong>5-Year Survival Rate:</strong> 5-10%, but improving with new treatments</p>
+                            <p><strong>Treatment:</strong> Targeted therapy, immunotherapy, chemotherapy, radiation for symptom relief.</p>
+                            <p><strong>Hope:</strong> New treatments offering longer survival and better quality of life.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PREVENTION PAGE -->
+    <div id="prevention" class="page">
+        <div class="content-page">
+            <div class="page-header">
+                <h1>Prevention & Risk Reduction</h1>
+                <p style="font-size: 1.2rem; color: #64748b;">Take control of your lung health with proven strategies</p>
+            </div>
+
+            <!-- Risk Calculator -->
+            <div class="calculator">
+                <h3>🎯 Assess Your Risk Level</h3>
+                <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Answer these questions to get a personalized risk assessment</p>
+                
+                <div class="question">
+                    <label>Do you currently smoke?</label>
+                    <select id="smoking">
+                        <option value="0">Never smoked</option>
+                        <option value="3">Former smoker (quit &gt;10 years ago)</option>
+                        <option value="5">Former smoker (quit &lt;10 years ago)</option>
+                        <option value="8">Current smoker (&lt;1 pack/day)</option>
+                        <option value="10">Current smoker (≥1 pack/day)</option>
+                    </select>
+                </div>
+
+                <div class="question">
+                    <label>Your age:</label>
+                    <select id="age">
+                        <option value="0">Under 40</option>
+                        <option value="2">40-54</option>
+                        <option value="5">55-64</option>
+                        <option value="7">65-74</option>
+                        <option value="8">75+</option>
+                    </select>
+                </div>
+
+                <div class="question">
+                    <label>Exposure to secondhand smoke:</label>
+                    <select id="secondhand">
+                        <option value="0">Rarely or never</option>
+                        <option value="2">Occasional</option>
+                        <option value="4">Frequent (home or work)</option>
+                    </select>
+                </div>
+
+                <div class="question">
+                    <label>Family history of lung cancer:</label>
+                    <select id="family">
+                        <option value="0">No family history</option>
+                        <option value="3">One relative</option>
+                        <option value="5">Multiple relatives</option>
+                    </select>
+                </div>
+
+                <div class="question">
+                    <label>Occupational exposure (asbestos, chemicals):</label>
+                    <select id="occupational">
+                        <option value="0">No exposure</option>
+                        <option value="3">Past exposure</option>
+                        <option value="5">Current exposure</option>
+                    </select>
+                </div>
+
+                <button class="btn-primary" onclick="calculateRisk()" style="width: 100%; margin-top: 1rem;">Calculate My Risk</button>
+
+                <div class="risk-result" id="riskResult">
+                    <h4 style="color: #0c4a6e; margin-bottom: 1rem;">Your Risk Level:</h4>
+                    <div class="risk-level" id="riskLevel"></div>
+                    <p id="riskAdvice" style="color: #64748b; margin-top: 1rem; line-height: 1.8;"></p>
+                </div>
+            </div>
+
+            <!-- Prevention Strategies -->
+            <h3 style="color: #0c4a6e; font-size: 2rem; margin: 3rem 0 2rem;">Proven Prevention Strategies</h3>
+            
+            <div class="card-grid">
+                <div class="interactive-card">
+                    <div class="card-icon">🚭</div>
+                    <div class="card-title">Quit Smoking</div>
+                    <p style="color: #64748b; margin-bottom: 1rem;">The #1 way to prevent lung cancer. Risk drops 50% within 10 years.</p>
+                    <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <strong style="color: #0c4a6e;">Resources:</strong>
+                        <ul style="color: #64748b; margin-left: 1.5rem; margin-top: 0.5rem; font-size: 0.9rem;">
+                            <li>1-800-QUIT-NOW hotline</li>
+                            <li>Nicotine replacement therapy</li>
+                            <li>Prescription medications</li>
+                            <li>Support groups</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="interactive-card">
+                    <div class="card-icon">🏠</div>
+                    <div class="card-title">Test for Radon</div>
+                    <p style="color: #64748b;">Second leading cause of lung cancer. Simple home test kits available for $20-30.</p>
+                    <div class="progress-bar" style="margin-top: 1rem;">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.5rem;">60% of homes have safe radon levels</p>
+                </div>
+
+                <div class="interactive-card">
+                    <div class="card-icon">😷</div>
+                    <div class="card-title">Protect from Carcinogens</div>
+                    <p style="color: #64748b;">Use protective equipment at work. Avoid asbestos, diesel exhaust, and industrial chemicals.</p>
+                </div>
+
+                <div class="interactive-card">
+                    <div class="card-icon">🥗</div>
+                    <div class="card-title">Healthy Diet</div>
+                    <p style="color: #64748b;">Eat plenty of fruits and vegetables. Antioxidants may help protect lung cells.</p>
+                </div>
+
+                <div class="interactive-card">
+                    <div class="card-icon">🏃</div>
+                    <div class="card-title">Regular Exercise</div>
+                    <p style="color: #64748b;">30 minutes daily improves lung function and overall health.</p>
+                </div>
+
+                <div class="interactive-card">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">Get Screened</div>
+                    <p style="color: #64748b;">Annual low-dose CT for high-risk adults 55-80. Early detection saves lives.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TREATMENT PAGE -->
+    <div id="treatment" class="page">
+        <div class="content-page">
+            <div class="page-header">
+                <h1>Treatment Options</h1>
+                <p style="font-size: 1.2rem; color: #64748b;">Modern, personalized approaches to fighting lung cancer</p>
+            </div>
+
+            <!-- Tabs for Treatment -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('surgery-tab')">Surgery</button>
+                <button class="tab" onclick="switchTab('chemo-tab')">Chemotherapy</button>
+                <button class="tab" onclick="switchTab('radiation-tab')">Radiation</button>
+                <button class="tab" onclick="switchTab('targeted-tab')">Targeted Therapy</button>
+                <button class="tab" onclick="switchTab('immuno-tab')">Immunotherapy</button>
+            </div>
+
+            <!-- Surgery Tab -->
+            <div id="surgery-tab" class="tab-content active">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                    <div>
+                        <h3 style="color: #0c4a6e; font-size: 1.8rem; margin-bottom: 1rem;">🔪 Surgical Options</h3>
+                        <p style="color: #64748b; line-height: 1.8; margin-bottom: 2rem;">Surgery is most effective for early-stage lung cancer. The goal is to remove the tumor and surrounding tissue.</p>
+                        
+                        <div class="accordion">
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <span>Lobectomy (Most Common)</span>
+                                    <span class="accordion-icon">▼</span>
+                                </div>
+                                <div class="accordion-content">
+                                    <p>Removal of an entire lobe of the lung. The lung has 5 lobes (3 right, 2 left).</p>
+                                    <p><strong>Best for:</strong> Early-stage tumors contained in one lobe</p>
+                                    <p><strong>Recovery:</strong> 4-6 weeks</p>
+                                    <p><strong>Outcome:</strong> Highest cure rate for early cancer</p>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <span>Wedge/Segmental Resection</span>
+                                    <span class="accordion-icon">▼</span>
+                                </div>
+                                <div class="accordion-content">
+                                    <p>Removal of small section of lung with tumor.</p>
+                                    <p><strong>Best for:</strong> Very small tumors, patients with poor lung function</p>
+                                    <p><strong>Recovery:</strong> 2-4 weeks</p>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <span>Pneumonectomy</span>
+                                    <span class="accordion-icon">▼</span>
+                                </div>
+                                <div class="accordion-content">
+                                    <p>Removal of entire lung. Reserved for large tumors.</p>
+                                    <p><strong>Recovery:</strong> 6-8 weeks</p>
+                                    <p><strong>Note:</strong> Can live normally with one lung</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 2rem; border-radius: 20px; height: fit-content;">
+                            <h4 style="color: #0c4a6e; margin-bottom: 1rem;">✅ Surgery Success Rates</h4>
+                            <div style="margin-bottom: 1.5rem;">
+                                <p style="color: #64748b; margin-bottom: 0.5rem;"><strong>Stage I:</strong></p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 70%;"></div>
+                                </div>
+                                <p style="color: #64748b; font-size: 0.9rem;">70% 5-year survival</p>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <p style="color: #64748b; margin-bottom: 0.5rem;"><strong>Stage II:</strong></p>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 50%;"></div>
+                                </div>
+                                <p style="color: #64748b; font-size: 0.9rem;">50% 5-year survival</p>
+                            </div>
+
+                            <h4 style="color: #0c4a6e; margin: 2rem 0 1rem;">Minimally Invasive Options</h4>
+                            <ul style="color: #64748b; margin-left: 1.5rem; line-height: 1.8;">
+                                <li><strong>VATS:</strong> Video-assisted thoracic surgery</li>
+                                <li><strong>Robot-assisted:</strong> Greater precision</li>
+                                <li>Smaller incisions, faster recovery</li>
+                                <li>Less pain, shorter hospital stay</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chemotherapy Tab -->
+            <div id="chemo-tab" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">💉 Chemotherapy: Systemic Treatment</h3>
+                
+                <div class="card-grid">
+                    <div class="interactive-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-title">How It Works</div>
+                        <p style="color: #64748b;">Powerful drugs that kill rapidly dividing cells throughout the body. Usually given in cycles with rest periods.</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">⏱️</div>
+                        <div class="card-title">Treatment Schedule</div>
+                        <p style="color: #64748b;">Typical: 3-4 cycles, each 3-4 weeks long. Total duration: 3-6 months.</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">💊</div>
+                        <div class="card-title">Common Drugs</div>
+                        <p style="color: #64748b;">Cisplatin, carboplatin, pemetrexed, docetaxel. Often used in combinations.</p>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 2rem; border-radius: 20px; border: 2px solid #e2e8f0; margin-top: 2rem;">
+                    <h4 style="color: #0c4a6e; margin-bottom: 1rem;">When Chemotherapy Is Used:</h4>
+                    <ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;">
+                        <li><strong>Before surgery (neoadjuvant):</strong> Shrink tumor</li>
+                        <li><strong>After surgery (adjuvant):</strong> Kill remaining cancer cells</li>
+                        <li><strong>Primary treatment:</strong> For advanced cancer</li>
+                        <li><strong>With radiation:</strong> Enhanced effectiveness</li>
+                        <li><strong>Palliative:</strong> Symptom relief, extend life</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Radiation Tab -->
+            <div id="radiation-tab" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">☢️ Radiation Therapy</h3>
+                
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>External Beam Radiation (EBRT)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Most common type.</strong> High-energy rays directed at cancer from outside the body.</p>
+                            <p><strong>Schedule:</strong> Usually 5 days/week for 5-7 weeks</p>
+                            <p><strong>Session length:</strong> 15-30 minutes</p>
+                            <p><strong>Pain:</strong> Painless, like getting an X-ray</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Stereotactic Body Radiation (SBRT)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>High-precision radiation</strong> delivered in fewer, higher doses.</p>
+                            <p><strong>Schedule:</strong> 1-5 treatments total</p>
+                            <p><strong>Best for:</strong> Early-stage patients who can't have surgery</p>
+                            <p><strong>Advantage:</strong> Minimizes damage to healthy tissue</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>Brachytherapy (Internal Radiation)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Radioactive material placed directly in or near the tumor.</p>
+                            <p><strong>Less common for lung cancer</strong> but used for airway blockages.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Targeted Therapy Tab -->
+            <div id="targeted-tab" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">🎯 Targeted Therapy: Precision Medicine</h3>
+                <p style="color: #64748b; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">Drugs that target specific genetic mutations in cancer cells. Requires genetic testing of tumor.</p>
+
+                <div class="card-grid">
+                    <div class="interactive-card">
+                        <div class="card-icon">🧬</div>
+                        <div class="card-title">EGFR Inhibitors</div>
+                        <p style="color: #64748b; margin-bottom: 0.5rem;">For EGFR mutation (10-15% of patients)</p>
+                        <p style="color: #64748b; font-size: 0.9rem;"><strong>Drugs:</strong> Osimertinib, Erlotinib</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🔬</div>
+                        <div class="card-title">ALK Inhibitors</div>
+                        <p style="color: #64748b; margin-bottom: 0.5rem;">For ALK rearrangement (5% of patients)</p>
+                        <p style="color: #64748b; font-size: 0.9rem;"><strong>Drugs:</strong> Alectinib, Crizotinib</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">💊</div>
+                        <div class="card-title">ROS1 Inhibitors</div>
+                        <p style="color: #64748b; margin-bottom: 0.5rem;">For ROS1 rearrangement (1-2% of patients)</p>
+                        <p style="color: #64748b; font-size: 0.9rem;"><strong>Drugs:</strong> Entrectinib, Crizotinib</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-title">BRAF Inhibitors</div>
+                        <p style="color: #64748b; margin-bottom: 0.5rem;">For BRAF V600E mutation</p>
+                        <p style="color: #64748b; font-size: 0.9rem;"><strong>Drugs:</strong> Dabrafenib + Trametinib</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🧪</div>
+                        <div class="card-title">KRAS G12C Inhibitors</div>
+                        <p style="color: #64748b; margin-bottom: 0.5rem;">Newest breakthrough (approved 2021)</p>
+                        <p style="color: #64748b; font-size: 0.9rem;"><strong>Drugs:</strong> Sotorasib, Adagrasib</p>
+                    </div>
+
+                    <div class="interactive-card">
+                        <div class="card-icon">🩸</div>
+                        <div class="card-title">Angiogenesis Inhibitors</div>
+                        <p style="color: #64748b; margin-bottom: 0.5rem;">Block blood vessel growth to tumors</p>
+                        <p style="color: #64748b; font-size: 0.9rem;"><strong>Drugs:</strong> Bevacizumab, Ramucirumab</p>
+                    </div>
+                </div>
+
+                <div style="background: #fef9e7; border-left: 4px solid #f59e0b; padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+                    <h4 style="color: #92400e; margin-bottom: 1rem;">💡 Why Targeted Therapy Matters</h4>
+                    <ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;">
+                        <li><strong>More effective:</strong> Response rates 60-80% vs 20-30% for chemo</li>
+                        <li><strong>Fewer side effects:</strong> Targets cancer cells specifically</li>
+                        <li><strong>Oral medication:</strong> Pills taken at home, not IV infusion</li>
+                        <li><strong>Better quality of life:</strong> Continue daily activities</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Immunotherapy Tab -->
+            <div id="immuno-tab" class="tab-content">
+                <h3 style="color: #0c4a6e; font-size: 2rem; margin-bottom: 2rem;">🛡️ Immunotherapy: Harnessing Your Immune System</h3>
+                <p style="color: #64748b; font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">Revolutionary treatment that helps your immune system recognize and destroy cancer cells. Game-changing results for many patients.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 2rem; border-radius: 20px;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 1rem;">How It Works</h4>
+                        <p style="color: #64748b; line-height: 1.8;">Cancer cells hide from the immune system using "checkpoint" proteins. Immunotherapy blocks these checkpoints, allowing immune cells to attack the cancer.</p>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 2rem; border-radius: 20px;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 1rem;">Success Rates</h4>
+                        <p style="color: #64748b; line-height: 1.8;">20-30% of patients have significant, long-lasting responses. Some patients remain cancer-free for years after stopping treatment.</p>
+                    </div>
+                </div>
+
+                <h4 style="color: #0c4a6e; font-size: 1.5rem; margin-bottom: 1.5rem;">Main Types of Immunotherapy:</h4>
+
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>PD-1/PD-L1 Inhibitors (Most Common)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Mechanism:</strong> Block PD-1 or PD-L1 proteins that cancer uses to hide</p>
+                            <p><strong>Drugs:</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li><strong>Pembrolizumab (Keytruda):</strong> First-line treatment for many patients</li>
+                                <li><strong>Nivolumab (Opdivo):</strong> Used alone or with chemotherapy</li>
+                                <li><strong>Atezolizumab (Tecentriq):</strong> Combined with chemo</li>
+                                <li><strong>Durvalumab (Imfinzi):</strong> Maintenance after chemo/radiation</li>
+                            </ul>
+                            <p style="margin-top: 1rem;"><strong>Given:</strong> IV infusion every 2-6 weeks</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>CTLA-4 Inhibitors</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p><strong>Drug:</strong> Ipilimumab (Yervoy)</p>
+                            <p><strong>Use:</strong> Sometimes combined with PD-1 inhibitors for advanced cancer</p>
+                            <p><strong>Note:</strong> More side effects but can boost effectiveness</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 2rem; border-radius: 12px; margin-top: 2rem;">
+                    <h4 style="color: #065f46; margin-bottom: 1rem;">✨ Breakthrough Benefits</h4>
+                    <ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;">
+                        <li><strong>Durable responses:</strong> Can last years after stopping treatment</li>
+                        <li><strong>Works for advanced cancer:</strong> Even Stage IV can respond</li>
+                        <li><strong>Combination power:</strong> Enhanced when paired with chemotherapy</li>
+                        <li><strong>Quality of life:</strong> Generally fewer side effects than chemo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESOURCES PAGE -->
+    <div id="resources" class="page">
+        <div class="content-page">
+            <div class="page-header">
+                <h1>Support & Resources</h1>
+                <p style="font-size: 1.2rem; color: #64748b;">You're not alone. Connect with organizations, find support, and access helpful tools.</p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card-grid">
+                <div class="interactive-card" onclick="openModal('aecc')">
+                    <div class="card-icon">🏥</div>
+                    <div class="card-title">AECC - Asociación Española</div>
+                    <p style="color: #64748b;">Organización líder en España contra el cáncer. 24/7 apoyo gratuito.</p>
+                    <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Más información →</p>
+                </div>
+
+                <div class="interactive-card" onclick="openModal('lcfa')">
+                    <div class="card-icon">💙</div>
+                    <div class="card-title">Fundación Más Que Ideas</div>
+                    <p style="color: #64748b;">Apoyo a pacientes, investigación y programas educativos en España.</p>
+                    <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Más información →</p>
+                </div>
+
+                <div class="interactive-card" onclick="openModal('support')">
+                    <div class="card-icon">🤝</div>
+                    <div class="card-title">Support Groups</div>
+                    <p style="color: #64748b;">Connect with survivors and caregivers who understand your journey.</p>
+                    <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Find a group →</p>
+                </div>
+
+                <div class="interactive-card" onclick="openModal('financial')">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">Financial Assistance</div>
+                    <p style="color: #64748b;">Help with treatment costs, medications, travel, and living expenses.</p>
+                    <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Get help →</p>
+                </div>
+
+                <div class="interactive-card" onclick="openModal('clinical')">
+                    <div class="card-icon">🧪</div>
+                    <div class="card-title">Clinical Trials</div>
+                    <p style="color: #64748b;">Access cutting-edge treatments not yet widely available.</p>
+                    <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Search trials →</p>
+                </div>
+
+                <div class="interactive-card" onclick="openModal('caregivers')">
+                    <div class="card-icon">👨‍👩‍👧</div>
+                    <div class="card-title">Caregiver Resources</div>
+                    <p style="color: #64748b;">Support and tools for family members and caregivers.</p>
+                    <p style="color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Get support →</p>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section" style="margin-top: 4rem; padding-top: 4rem;">
+                <h3 style="color: #0c4a6e; font-size: 2rem; text-align: center; margin-bottom: 3rem;">Frequently Asked Questions</h3>
+                
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div class="accordion">
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>What are the first signs of lung cancer?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Early signs include persistent cough (lasting 2-3+ weeks), shortness of breath, chest pain, and coughing up blood. However, early-stage lung cancer often has no symptoms, which is why screening is so important for high-risk individuals.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>Can non-smokers get lung cancer?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Yes. About 10-20% of lung cancer patients never smoked. Risk factors for non-smokers include secondhand smoke, radon exposure, air pollution, family history, and occupational exposures (asbestos, diesel exhaust).</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>How is lung cancer detected early?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Annual low-dose CT screening is recommended for adults 55-80 who are current or former heavy smokers (30+ pack-years). This screening can detect cancer when it's small and most treatable, reducing death risk by 20%.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>What's the survival rate for lung cancer?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Survival depends heavily on stage at diagnosis. Stage I: 60-70%. Stage II: 40-50%. Stage III: 15-30%. Stage IV: 5-10%. Overall 5-year survival is about 23%, but this is improving with new treatments like immunotherapy and targeted therapy.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>Is lung cancer always caused by smoking?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>No. While smoking causes 85% of cases, other risk factors include radon (2nd leading cause), secondhand smoke, air pollution, occupational exposures, and genetic factors. However, quitting smoking at any age significantly reduces risk.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>What are the newest treatment breakthroughs?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Major advances include: immunotherapy (checkpoint inhibitors), targeted therapies for specific mutations (EGFR, ALK, KRAS G12C), liquid biopsies for early detection, and AI-assisted diagnosis. These have dramatically improved outcomes, especially for advanced-stage patients.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>Should I get genetic testing?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Yes! All advanced NSCLC patients should get molecular/genetic testing. It identifies targetable mutations (EGFR, ALK, ROS1, BRAF, KRAS, etc.) that can be treated with highly effective targeted therapies. Testing helps personalize treatment.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>How can I reduce my risk?</span>
+                                <span class="accordion-icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <p>Key steps: Don't smoke (or quit immediately), test home for radon, avoid secondhand smoke, use protective equipment if exposed to carcinogens at work, eat healthy diet rich in fruits/vegetables, exercise regularly, and get screened if high-risk.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Helplines -->
+            <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 3rem; border-radius: 24px; margin-top: 4rem; text-align: center;">
+                <h3 style="color: #991b1b; font-size: 2rem; margin-bottom: 1.5rem;">📞 ¿Necesitas Ayuda Inmediata? / Need Immediate Support?</h3>
+                <p style="color: #64748b; font-size: 1.1rem; margin-bottom: 2rem;">Líneas de ayuda en España / Spanish Support Lines</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 16px;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">AECC (Asociación Española Contra el Cáncer)</h4>
+                        <p style="color: #0ea5e9; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">900 100 036</p>
+                        <p style="color: #64748b; font-size: 0.9rem;">Atención 24h, gratuita</p>
+                    </div>
+                    <div style="background: white; padding: 1.5rem; border-radius: 16px;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">SEPAR (Neumología)</h4>
+                        <p style="color: #0ea5e9; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">91 535 9372</p>
+                        <p style="color: #64748b; font-size: 0.9rem;">Sociedad Española de Neumología</p>
+                    </div>
+                    <div style="background: white; padding: 1.5rem; border-radius: 16px;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Dejar de Fumar</h4>
+                        <p style="color: #0ea5e9; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">900 850 300</p>
+                        <p style="color: #64748b; font-size: 0.9rem;">Línea para dejar de fumar</p>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: 16px;">
+                    <h4 style="color: #0c4a6e; margin-bottom: 1rem;">🏥 Más Recursos en España:</h4>
+                    <div style="color: #64748b; text-align: left; max-width: 600px; margin: 0 auto;">
+                        <p><strong>• Fundación Más Que Ideas:</strong> Apoyo a pacientes de cáncer de pulmón</p>
+                        <p><strong>• GECP:</strong> Grupo Español de Cáncer de Pulmón (investigación)</p>
+                        <p><strong>• Hospitales de referencia:</strong> Hospital La Paz (Madrid), Hospital Clínic (Barcelona), Hospital Universitario La Fe (Valencia)</p>
+                        <p><strong>• Web AECC:</strong> www.aecc.es</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">×</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageId) link.classList.add('active');
+            });
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Tab Switching
+        function switchTab(tabId) {
+            const parentPage = document.querySelector('.page.active');
+            parentPage.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            parentPage.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            parentPage.querySelector(`#${tabId}`).classList.add('active');
+        }
+
+        // Accordion Toggle
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const content = header.nextElementSibling;
+            const isActive = item.classList.contains('active');
+            
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('active');
+                i.querySelector('.accordion-content').style.maxHeight = null;
+            });
+            
+            if (!isActive) {
+                item.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+
+        // Testimonial Slider
+        let currentTestimonial = 0;
+        const testimonials = document.querySelectorAll('.testimonial');
+
+        function changeTestimonial(direction) {
+            testimonials[currentTestimonial].classList.remove('active');
+            currentTestimonial = (currentTestimonial + direction + testimonials.length) % testimonials.length;
+            testimonials[currentTestimonial].classList.add('active');
+        }
+
+        // Auto-rotate testimonials
+        setInterval(() => changeTestimonial(1), 6000);
+
+        // Animated Counter
+        function animateCounter(element) {
+            const target = parseInt(element.dataset.target);
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Trigger counters when visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.target.textContent === '0') {
+                    animateCounter(entry.target);
+                }
+            });
+        });
+
+        document.querySelectorAll('.stat-number').forEach(el => observer.observe(el));
+
+        // Risk Calculator
+        function calculateRisk() {
+            const smoking = parseInt(document.getElementById('smoking').value);
+            const age = parseInt(document.getElementById('age').value);
+            const secondhand = parseInt(document.getElementById('secondhand').value);
+            const family = parseInt(document.getElementById('family').value);
+            const occupational = parseInt(document.getElementById('occupational').value);
+            
+            const total = smoking + age + secondhand + family + occupational;
+            const result = document.getElementById('riskResult');
+            const level = document.getElementById('riskLevel');
+            const advice = document.getElementById('riskAdvice');
+            
+            let riskText, riskClass, adviceText;
+            
+            if (total <= 5) {
+                riskText = 'LOW RISK';
+                riskClass = 'risk-low';
+                adviceText = 'Great news! Your risk is relatively low. Maintain a healthy lifestyle with regular exercise, a balanced diet, and avoid smoking. Continue these healthy habits!';
+            } else if (total <= 15) {
+                riskText = 'MODERATE RISK';
+                riskClass = 'risk-medium';
+                adviceText = 'You have some risk factors. Consider: quitting smoking if applicable, testing your home for radon, discussing screening with your doctor (especially if 55+), and reducing exposure to secondhand smoke and occupational hazards.';
+            } else {
+                riskText = 'HIGH RISK';
+                riskClass = 'risk-high';
+                adviceText = 'Your risk factors are significant. STRONGLY RECOMMENDED: Talk to your doctor about lung cancer screening (low-dose CT scan), quit smoking immediately if you smoke, test for radon, and discuss preventive strategies with a healthcare provider. Early detection is crucial.';
+            }
+            
+            level.textContent = riskText;
+            level.className = `risk-level ${riskClass}`;
+            advice.textContent = adviceText;
+            result.classList.add('show');
+            
+            result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Modal Functions
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const body = document.getElementById('modalBody');
+            
+            const content = {
+                'nsclc': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Non-Small Cell Lung Cancer (NSCLC)</h2><p style="color: #64748b; line-height: 1.8;">NSCLC accounts for 85% of lung cancer cases. It grows more slowly than small cell lung cancer and has three main subtypes: adenocarcinoma (most common), squamous cell carcinoma, and large cell carcinoma. Treatment often includes surgery, chemotherapy, radiation, targeted therapy, or immunotherapy depending on the stage.</p>',
+                
+                'sclc': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Small Cell Lung Cancer (SCLC)</h2><p style="color: #64748b; line-height: 1.8;">SCLC represents 15% of cases and grows rapidly. It\'s strongly linked to smoking and tends to spread quickly. However, it responds well to chemotherapy and radiation. Treatment typically involves chemotherapy with or without radiation, and sometimes immunotherapy.</p>',
+                
+                'rare': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Rare Lung Cancer Types</h2><p style="color: #64748b; line-height: 1.8;">Includes carcinoid tumors (slow-growing, often curable), adenoid cystic carcinomas, lymphomas, and sarcomas. These require specialized treatment approaches. Consult with specialists experienced in rare lung cancers.</p>',
+                
+                'aecc': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">AECC - Asociación Española Contra el Cáncer</h2><p style="color: #64748b; line-height: 1.8; margin-bottom: 1rem;">La organización líder en España dedicada a la lucha contra el cáncer. Servicios incluyen:</p><ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;"><li>Línea de Ayuda 24/7: 900 100 036 (gratuita)</li><li>Recursos educativos gratuitos</li><li>Grupos de apoyo en toda España</li><li>Programas para dejar de fumar</li><li>Financiación de investigación</li><li>Ayuda psicológica</li><li>Apoyo social y económico</li></ul><p style="color: #0ea5e9; margin-top: 1rem;"><strong>Web:</strong> www.aecc.es</p>',
+                
+                'lcfa': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Fundación Más Que Ideas</h2><p style="color: #64748b; line-height: 1.8;">Fundación española dedicada al apoyo de pacientes con cáncer de pulmón y financiación de investigación. Programas incluyen navegación de pacientes, webinarios educativos y asistencia económica.</p><p style="color: #0ea5e9; margin-top: 1rem;"><strong>También:</strong> GECP (Grupo Español de Cáncer de Pulmón) - Investigación y avances médicos</p>',
+                
+                'support': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Grupos de Apoyo en España</h2><p style="color: #64748b; line-height: 1.8; margin-bottom: 1rem;">Conecta con otros que entienden tu situación:</p><ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;"><li>Grupos de apoyo AECC en toda España</li><li>Comunidades online en español</li><li>Programas de mentoría con supervivientes</li><li>Redes de apoyo para cuidadores</li><li>Asociaciones de pacientes locales</li></ul><p style="color: #0ea5e9; margin-top: 1rem;"><strong>Contacto:</strong> 900 100 036</p>',
+                
+                'financial': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Ayuda Económica en España</h2><ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;"><li><strong>AECC:</strong> Ayudas económicas y apoyo social</li><li><strong>Seguridad Social:</strong> Cobertura de tratamientos oncológicos</li><li><strong>Incapacidad Temporal:</strong> Durante el tratamiento</li><li><strong>Ayudas autonómicas:</strong> Cada comunidad ofrece apoyo adicional</li><li><strong>Fundaciones:</strong> Ayuda para gastos de desplazamiento y alojamiento</li><li><strong>Programas farmacéuticos:</strong> Acceso a medicamentos</li></ul><p style="color: #0ea5e9; margin-top: 1rem;"><strong>Info:</strong> Trabajador social del hospital o AECC</p>',
+                
+                'clinical': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Ensayos Clínicos en España</h2><p style="color: #64748b; line-height: 1.8; margin-bottom: 1rem;">Acceso a tratamientos de vanguardia:</p><ul style="color: #64748b; margin-left: 1.5rem; line-height: 2;"><li><strong>REEC:</strong> Registro Español de Estudios Clínicos (reec.aemps.es)</li><li>Ensayos en hospitales españoles principales</li><li>GECP - Grupo Español de Cáncer de Pulmón</li><li>Consulta con tu oncólogo sobre opciones</li><li>Hospital La Paz, Hospital Clínic, Hospital La Fe</li></ul>',
+                
+                'caregivers': '<h2 style="color: #0c4a6e; margin-bottom: 1rem;">Caregiver Resources</h2><p style="color: #64748b; line-height: 1.8;">Supporting someone with lung cancer is challenging. Resources include:</p><ul style="color: #64748b; margin-left: 1.5rem; line-height: 2; margin-top: 1rem;"><li>Caregiver support groups</li><li>Respite care services</li><li>Educational resources</li><li>Self-care guidance</li><li>Financial planning assistance</li></ul>'
+            };
+            
+            body.innerHTML = content[type] || '<p>Information coming soon.</p>';
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Search functionality
+        document.getElementById('aboutSearch')?.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Simple search implementation - could be expanded
+            if (searchTerm.length > 2) {
+                console.log('Searching for:', searchTerm);
+                // In a real app, this would filter content
+            }
+        });
+    </script>
+</body>
+</html>
